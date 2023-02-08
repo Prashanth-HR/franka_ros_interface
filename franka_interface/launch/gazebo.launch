@@ -1,0 +1,54 @@
+<launch>
+  <!-- specify the planning pipeline -->
+  <arg name="pipeline" default="ompl" />
+
+  <!-- Panda specific options -->
+  <arg name="load_gripper" default="true" />
+  <arg name="start_controllers" default="true" />
+  <arg name="start_moveit" default="true" />
+  <arg name="transmission" default="position" />
+  <arg name="load_demo_planning_scene" default="false"/>
+
+
+  <!-- Gazebo specific options -->
+  <arg name="gazebo_gui" default="true" />
+  <arg name="paused" default="false" />
+  <!--  Load Franka Example Controllers  -->
+  <arg name="robot" default="panda" doc="choose your robot. Possible values: [panda, fr3]"/>
+  <arg name="arm_id" default="$(arg robot)" />
+  <rosparam command="load" file="$(find franka_ros_controllers)/config/ros_controllers.yaml" subst_value="true" />
+  
+  <node name="controllers" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="position_joint_trajectory_controller"/>
+
+  <!-- Load the custom controllers -->
+  <group if="$(eval arg('start_controllers') == true)">
+    <node name="load_controllers" pkg="controller_manager" type="controller_manager" respawn="false"
+                      output="screen" args="load
+                                           franka_ros_interface/effort_joint_impedance_controller
+                                           franka_ros_interface/effort_joint_position_controller
+                                           franka_ros_interface/effort_joint_torque_controller
+                                           franka_ros_interface/velocity_joint_velocity_controller
+                                           franka_ros_interface/position_joint_position_controller"/>
+  </group>
+
+  <node pkg="tf" type="static_transform_publisher" name="base_to_link0" args="0 0 0 0 0 0 1 base panda_link0 100" />                                                                      
+  <node pkg="tf" type="static_transform_publisher" name="world_to_base" args="0 0 0 0 0 0 1 world base 100" />                                                                      
+
+  <!-- Launch the gazebo simulator and spawn the robot -->
+  <include file="$(find franka_gazebo)/launch/panda.launch" pass_all_args="true">
+    <arg name="headless" value="$(eval not arg('gazebo_gui'))" />
+    <arg name="use_gripper" default="$(arg load_gripper)" />
+    <arg name="controller" default="$(arg transmission)_joint_trajectory_controller" />
+  </include>
+  <group if="$(eval arg('start_moveit') == true)">
+    <include file="$(find panda_moveit_config)/launch/demo.launch" pass_all_args="true">
+        <!-- robot description is loaded by gazebo.launch, to enable Gazebo features -->
+        <arg name="load_robot_description" value="false" />
+        
+        <arg name="moveit_controller_manager" value="simple" />
+    </include>
+    <group if="$(eval arg('load_demo_planning_scene') == true)">
+      <node name="demo_scene_loader" pkg="franka_moveit" type="create_demo_planning_scene.py" respawn="false" output="screen" />
+    </group>
+  </group> 
+</launch>

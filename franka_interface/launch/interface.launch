@@ -6,11 +6,13 @@
   <arg name="start_controllers" default="true" />
   <arg name="start_moveit" default="true" />
   <arg name="fake_execution" default="false" /> <!-- Only valid if running moveit movegroup (start_moveit:=true) -->
-  <arg name="load_demo_planning_scene" default="true"/>
+  <arg name="load_demo_planning_scene" default="false"/>
 
   <!-- Panda Control Interface -->
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find franka_panda_description)/robots/panda_arm_hand.urdf.xacro'" if="$(arg load_gripper)" />
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find franka_panda_description)/robots/panda_arm.urdf.xacro'" unless="$(arg load_gripper)" />
+  <arg name="robot" default="panda" doc="choose your robot. Possible values: [panda, fr3]"/>
+  <arg name="arm_id" default="$(arg robot)" />
+  <arg name="xacro_args" default="" />
+  <param name="robot_description" command="$(find xacro)/xacro $(find franka_description)/robots/$(arg robot)/$(arg robot).urdf.xacro hand:=$(arg load_gripper) arm_id:=$(arg arm_id) $(arg xacro_args)"/>
 
   <include file="$(find franka_gripper)/launch/franka_gripper.launch" if="$(arg load_gripper)">
     <arg name="robot_ip" value="$(env FRANKA_ROBOT_IP)" />
@@ -60,10 +62,17 @@
   <node pkg="tf" type="static_transform_publisher" name="base_to_link0" args="0 0 0 0 0 0 1 base panda_link0 100" />                                                                      
   <node pkg="tf" type="static_transform_publisher" name="world_to_base" args="0 0 0 0 0 0 1 world base 100" />                                                                      
   <group if="$(eval arg('start_moveit') == true)">
-    <include file="$(find panda_moveit_config)/launch/move_group.launch">
-      <arg name="fake_execution" value="$(arg fake_execution)" />
+    
+    <!-- as well as MoveIt demo -->
+    <include file="$(find panda_moveit_config)/launch/demo.launch" pass_all_args="true">
+      <!-- robot description is loaded by franka_control.launch -->
+      <arg name="load_robot_description" value="false" />
+      <arg name="transmission" default="position" />
       <arg name="load_gripper" value="$(arg load_gripper)" />
       <arg name="info" value="true" />
+      <!-- MoveItSimpleControllerManager provides ros_control's JointTrajectory controllers
+          as well as GripperCommand actions -->
+      <arg name="moveit_controller_manager" value="simple" />
     </include>
     <group if="$(eval arg('load_demo_planning_scene') == true)">
       <node name="demo_scene_loader" pkg="franka_moveit" type="create_demo_planning_scene.py" respawn="false" output="screen" />

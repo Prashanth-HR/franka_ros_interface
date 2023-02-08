@@ -81,7 +81,7 @@ class PandaMoveGroupInterface:
 
         try:
             rospy.get_param("/franka_gripper/robot_ip")
-            self._gripper_group = moveit_commander.MoveGroupCommander("hand")
+            self._gripper_group = moveit_commander.MoveGroupCommander("panda_hand")
         except KeyError:
             rospy.loginfo(("PandaMoveGroupInterface: could not detect gripper."))
             self._gripper_group = None
