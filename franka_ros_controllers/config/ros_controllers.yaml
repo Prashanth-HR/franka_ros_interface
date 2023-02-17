@@ -93,3 +93,6 @@ effort_joint_torque_controller:
         - panda_joint6
         - panda_joint7
 
+joint_stop_controller:
+    type: franka_ros_controllers/JointStopController
+    

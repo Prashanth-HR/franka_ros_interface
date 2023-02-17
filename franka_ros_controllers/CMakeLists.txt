@@ -49,6 +49,8 @@ add_library(franka_ros_controllers
   src/effort_joint_position_controller.cpp
   src/effort_joint_torque_controller.cpp
   src/velocity_joint_velocity_controller.cpp
+  ## Controller to handle stopping the robot
+  src/joint_stop_controller.cpp
 )
 
 add_dependencies(franka_ros_controllers
@@ -97,6 +99,7 @@ if(CLANG_TOOLS)
   file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
   file(GLOB_RECURSE HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/franka_ros_controllers/utils/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
   )
   add_format_target(franka_ros_controllers FILES ${SOURCES} ${HEADERS})
