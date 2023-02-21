@@ -56,8 +56,9 @@
                                            franka_ros_interface/effort_joint_position_controller
                                            franka_ros_interface/effort_joint_torque_controller
                                            franka_ros_interface/velocity_joint_velocity_controller
-                                           franka_ros_interface/position_joint_position_controller
-                                           franka_ros_interface/joint_stop_controller"/>
+                                           franka_ros_interface/position_joint_position_controller"/>
+                                           <!-- franka_ros_interface/joint_stop_controller"/> -->
+    <param name="controller_state_publish_rate" value="$(arg rate)"/>
   </group>
   <!-- Start robot stopping controller -->
   <!-- <node name="stop_robot" pkg="controller_manager" type="spawner" args="franka_ros_interface/stop_joint_stop_controller" /> -->

@@ -150,7 +150,7 @@ bool MotionControllerInterface::switchToDefaultController() {
 void MotionControllerInterface::jointCommandTimeoutCallback(const std_msgs::Float64 msg) {
   ROS_INFO_STREAM("MotionControllerInterface: Joint command timeout: " << msg.data);
   auto p_cmd_timeout_length = std::make_shared<ros::Duration>(
-                                std::min(1.0, std::max(0.0, double(msg.data))));
+                                std::min(10.0, std::max(0.0, double(msg.data))));
   box_timeout_length_.set(p_cmd_timeout_length);
 }
 

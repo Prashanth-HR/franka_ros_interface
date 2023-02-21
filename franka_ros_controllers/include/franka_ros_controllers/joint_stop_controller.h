@@ -36,7 +36,8 @@ struct JointStopConfig {
 /// Joints to rest. It first applies pure damping until the joints move very slow and then switches
 /// to keeping the current position.
 class JointStopController : public controller_interface::MultiInterfaceController<
-                                            franka_hw::FrankaModelInterface> {
+                                            franka_hw::FrankaModelInterface,
+                                            hardware_interface::EffortJointInterface> {
  public:
   /**
    * @brief init Claims ros control hardware interfaces, parses all required parameters and sets up

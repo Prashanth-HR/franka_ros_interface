@@ -38,7 +38,7 @@ bool JointStopController::init(hardware_interface::RobotHW* robot_hw,
   //
 
   std::vector<double> damping;
-  if (!node_handle.getParam("stop/damping", damping) || damping.size() != joint_names_.size()) {
+  if (!node_handle.getParam("/franka_ros_interface/joint_stop_controller/stop/damping", damping) || damping.size() != joint_names_.size()) {
     ROS_WARN(
         "JointStopController: Got insufficienct parameters for damping, using default %f for"
         "all joints",
@@ -53,7 +53,7 @@ bool JointStopController::init(hardware_interface::RobotHW* robot_hw,
   }
 
   std::vector<double> stiffness;
-  if (!node_handle.getParam("stop/stiffness", stiffness) ||
+  if (!node_handle.getParam("/franka_ros_interface/joint_stop_controller/stop/stiffness", stiffness) ||
       stiffness.size() != joint_names_.size()) {
     ROS_WARN(
         "JointStopController: Got insufficienct parameters for stiffness, using default %f for"
@@ -70,7 +70,7 @@ bool JointStopController::init(hardware_interface::RobotHW* robot_hw,
 
   std::vector<double> dq_stopped_threshold;
   double default_dq_stopped_threshold(0.05);
-  if (!node_handle.getParam("stop/dq_stopped_threshold", dq_stopped_threshold) ||
+  if (!node_handle.getParam("/franka_ros_interface/joint_stop_controller/stop/dq_stopped_threshold", dq_stopped_threshold) ||
       dq_stopped_threshold.size() != joint_names_.size()) {
     ROS_WARN(
         "JointStopController: Got insufficient parameters dq_stopped_threshold, using default:"
@@ -81,7 +81,7 @@ bool JointStopController::init(hardware_interface::RobotHW* robot_hw,
               default_dq_stopped_threshold);
   }
 
-  node_handle.getParam("verbose", verbose_);
+  node_handle.getParam("/franka_ros_interface/joint_stop_controller/verbose", verbose_);
 
   auto* effort_joint_interface = robot_hw->get<hardware_interface::EffortJointInterface>();
   if (effort_joint_interface == nullptr) {
@@ -105,7 +105,7 @@ bool JointStopController::init(hardware_interface::RobotHW* robot_hw,
   }
 
   bool testing = false;
-  node_handle.getParam("stop/testing", testing);
+  node_handle.getParam("/franka_ros_interface/joint_stop_controller/stop/testing", testing);
   if (testing) {
     trigger_server_ =
         node_handle.advertiseService(arm_id_ + "/stop", &JointStopController::stopTriggerCb, this);

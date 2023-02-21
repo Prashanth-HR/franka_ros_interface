@@ -95,4 +95,9 @@ effort_joint_torque_controller:
 
 joint_stop_controller:
     type: franka_ros_controllers/JointStopController
-    
+    stop:
+        damping: 10.0
+        stiffness: 100.0
+        dq_stopped_threshold: 0.05
+        testing: false
+    verbose: true
