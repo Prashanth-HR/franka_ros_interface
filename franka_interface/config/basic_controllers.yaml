@@ -30,7 +30,7 @@ position_joint_trajectory_controller:
 franka_ros_interface:
   custom_franka_state_controller:
     type: franka_interface/CustomFrankaStateController
-    publish_rate: 1000  # [Hz]
+    publish_rate: 30  # [Hz]
     joint_names:
       - panda_joint1
       - panda_joint2

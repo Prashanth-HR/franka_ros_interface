@@ -1,6 +1,7 @@
 
 import geometry_msgs.msg
 import quaternion
+import numpy as np
 
 def create_pose_msg(position, orientation):
     """

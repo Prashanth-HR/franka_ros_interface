@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
 <launch>
+  <arg name="robot_ip" default="10.162.83.122"/>
   <rosparam command="load" file="$(find franka_ros_controllers)/config/ros_controllers.yaml" ns="/franka_ros_interface"/>
   <arg name="load_gripper" default="true" />
   <arg name="rate" default="1000" />
@@ -15,15 +16,15 @@
   <param name="robot_description" command="$(find xacro)/xacro $(find franka_description)/robots/$(arg robot)/$(arg robot).urdf.xacro hand:=$(arg load_gripper) arm_id:=$(arg arm_id) $(arg xacro_args)"/>
 
   <include file="$(find franka_gripper)/launch/franka_gripper.launch" if="$(arg load_gripper)">
-    <arg name="robot_ip" value="$(env FRANKA_ROBOT_IP)" />
+    <arg name="robot_ip" value="$(arg robot_ip)" />
   </include>
 
   <!-- Start the custom_franka_control_node for advertising controller services and starting custom controller manager-->
   <rosparam command="load" file="$(find franka_interface)/config/robot_config.yaml"/>
-  <param name="/robot_config/robot_ip" type="str" value="$(env FRANKA_ROBOT_IP)" />
+  <param name="/robot_config/robot_ip" type="str" value="$(arg robot_ip)" />
   <node name="franka_control" pkg="franka_interface" type="custom_franka_control_node" output="screen" required="true" >
     <!-- <rosparam command="load" file="$(find franka_control)/config/custom_franka_control_node.yaml" /> -->
-    <!-- <param name="robot_ip" value="$(env FRANKA_ROBOT_IP)" /> -->
+    <!-- <param name="robot_ip" value="$(arg robot_ip)" /> -->
     <param name="publish_frequency" value="$(arg rate)"/>
   </node>
 
@@ -58,13 +59,15 @@
                                            franka_ros_interface/velocity_joint_velocity_controller
                                            franka_ros_interface/position_joint_position_controller"/>
                                            <!-- franka_ros_interface/joint_stop_controller"/> -->
-    <param name="controller_state_publish_rate" value="$(arg rate)"/>
+    <!-- <param name="controller_state_publish_rate" value="$(arg rate)"/> -->
   </group>
   <!-- Start robot stopping controller -->
   <!-- <node name="stop_robot" pkg="controller_manager" type="spawner" args="franka_ros_interface/stop_joint_stop_controller" /> -->
 
-  <node pkg="tf" type="static_transform_publisher" name="base_to_link0" args="0 0 0 0 0 0 1 base panda_link0 100" />                                                                      
-  <node pkg="tf" type="static_transform_publisher" name="world_to_base" args="0 0 0 0 0 0 1 world base 100" />                                                                      
+  <node pkg="tf" type="static_transform_publisher" name="base_to_link0" args="0 0 0 0 0 0 base panda_link0 100" />                                                                      
+  <node pkg="tf" type="static_transform_publisher" name="world_to_base" args="0 0 0 0 0 0 world base 100" />   
+  
+
   <group if="$(eval arg('start_moveit') == true)">
     
     <!-- as well as MoveIt demo -->

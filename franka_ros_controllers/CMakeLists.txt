@@ -25,6 +25,8 @@ find_package(Franka 0.5.0 REQUIRED)
 
 generate_dynamic_reconfigure_options(
   cfg/joint_controller_params.cfg
+  cfg/teleop_param.cfg
+  cfg/teleop_gripper_param.cfg
 )
 
 catkin_package(
@@ -49,6 +51,7 @@ add_library(franka_ros_controllers
   src/effort_joint_position_controller.cpp
   src/effort_joint_torque_controller.cpp
   src/velocity_joint_velocity_controller.cpp
+  src/teleop_joint_pd_example_controller.cpp
   ## Controller to handle stopping the robot
   src/joint_stop_controller.cpp
 )
@@ -71,6 +74,24 @@ target_include_directories(franka_ros_controllers SYSTEM PUBLIC
 )
 target_include_directories(franka_ros_controllers PUBLIC
   include
+)
+
+add_executable(teleop_gripper_node
+  src/teleop_gripper_node.cpp
+)
+target_include_directories(teleop_gripper_node PUBLIC
+  ${catkin_INCLUDE_DIRS}
+)
+target_link_libraries(teleop_gripper_node PUBLIC
+  ${Franka_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
+add_dependencies(teleop_gripper_node
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+  ${PROJECT_NAME}_generate_messages_cpp
+  ${PROJECT_NAME}_gencpp
+  ${PROJECT_NAME}_gencfg
 )
 
 ## Installation

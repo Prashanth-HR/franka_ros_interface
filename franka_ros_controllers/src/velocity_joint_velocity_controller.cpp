@@ -202,6 +202,12 @@ void VelocityJointVelocityController::jointControllerParamCallback(franka_ros_co
 }
 
 void VelocityJointVelocityController::stopping(const ros::Time& /*time*/) {
+
+  // ROS_INFO(" Stopping velocity controller");
+  // for (size_t i = 0; i < 7; ++i) {
+  //   velocity_joint_handles_[i].setCommand(0.0);
+  // }
+  // ROS_INFO(" Stopped");
   // WARNING: DO NOT SEND ZERO VELOCITIES HERE AS IN CASE OF ABORTING DURING MOTION
   // A JUMP TO ZERO WILL BE COMMANDED PUTTING HIGH LOADS ON THE ROBOT. LET THE DEFAULT
   // BUILT-IN STOPPING BEHAVIOR SLOW DOWN THE ROBOT.
